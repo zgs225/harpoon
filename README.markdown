@@ -8,7 +8,7 @@ Harpoon
 ``` bash
 harpoon command <arguments>
 
-Cmmands:
+Commands:
 
         init    进行初始化，生成工具脚本
 ```
