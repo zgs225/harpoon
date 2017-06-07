@@ -27,12 +27,11 @@ func hInit(args []string) {
 
 func writeConfig(repo, image string) {
 	s := fmt.Sprintf("repo=%s\nimage=%s\n", repo, image)
-	f, err := os.OpenFile(CONFIG_FILE, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		panic(err)
+	c := &config{
+		Repo:  repo,
+		Image: image,
 	}
-	defer f.Close()
-	fmt.Fprint(f, s)
+	c.writeToDisk()
 	fmt.Fprint(os.Stderr, "[i] Initilizing...\n")
 	fmt.Fprint(os.Stderr, s)
 }
