@@ -39,7 +39,11 @@ type token struct {
 func loadConfig() *config {
 	f, err := os.Open(CONFIG_FILE)
 	if err != nil {
-		panic(err)
+		if err == os.ErrNotExist {
+			fmt.Fprintln(os.Stderr, ".harpoon file not exists, please init first")
+		} else {
+			panic(err)
+		}
 	}
 	defer f.Close()
 	b, err := ioutil.ReadAll(f)

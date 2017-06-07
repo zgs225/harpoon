@@ -12,7 +12,8 @@ func usage() {
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Commands:")
 	fmt.Fprintln(os.Stderr, "")
-	fmt.Fprintln(os.Stderr, "\tinit\t进行初始化，生成工具脚本")
+	fmt.Fprintln(os.Stderr, "\tinit \t进行初始化，生成工具脚本")
+	fmt.Fprintln(os.Stderr, "\tbuild\t编译Docker镜像")
 	fmt.Fprintln(os.Stderr, "")
 }
 
