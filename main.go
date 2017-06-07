@@ -6,6 +6,8 @@ import (
 )
 
 func usage() {
+	fmt.Fprintln(os.Stderr, "Harpoon is a tool for simplify build and releaser docker image.")
+	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "\tharpoon command <arguments>")
