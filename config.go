@@ -80,7 +80,10 @@ func (c *config) writeToDisk() error {
 		return err
 	}
 	defer f.Close()
-	f.Write(b)
+	_, err = f.Write(b)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
