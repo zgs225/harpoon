@@ -95,8 +95,9 @@ type token struct {
 func loadConfig() *config {
 	f, err := os.Open(CONFIG_FILE)
 	if err != nil {
-		if err == os.ErrNotExist {
-			fmt.Fprintln(os.Stderr, ".harpoon file not exists, please init first")
+		if os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, "[e] .harpoon file not exists, please init first")
+			os.Exit(1)
 		} else {
 			panic(err)
 		}
