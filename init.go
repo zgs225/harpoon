@@ -27,7 +27,7 @@ func hInit(args []string) {
 
 func writeConfig(repo, image string) {
 	s := fmt.Sprintf("repo=%s\nimage=%s\n", repo, image)
-	f, err := os.OpenFile(".harpoon", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(CONFIG_FILE, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		panic(err)
 	}

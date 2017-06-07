@@ -27,6 +27,8 @@ func main() {
 	switch cmd {
 	case "init":
 		hInit(os.Args[2:])
+	case "build":
+		hBuild()
 	default:
 		usage()
 		os.Exit(1)
