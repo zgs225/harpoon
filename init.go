@@ -31,7 +31,10 @@ func writeConfig(repo, image string) {
 		Repo:  repo,
 		Image: image,
 	}
-	c.writeToDisk()
+	err := c.writeToDisk()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Fprint(os.Stderr, "[i] Initilizing...\n")
 	fmt.Fprint(os.Stderr, s)
 }
