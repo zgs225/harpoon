@@ -10,6 +10,7 @@ import (
 
 func hBuild() {
 	c := loadConfig()
+	c.check()
 	fmt.Printf("[i] Building docker image %v\n", c.Image)
 	cmd := exec.Command("docker", "build", "-t", c.Image, ".")
 	cmd.Stdout = os.Stdout

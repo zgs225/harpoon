@@ -31,6 +31,13 @@ type config struct {
 	Image string
 }
 
+func (c *config) check() {
+	if len(c.Repo) == 0 || len(c.Image) == 0 {
+		fmt.Fprintln(os.Stderr, "[e] Not initialized.")
+		os.Exit(-1)
+	}
+}
+
 type token struct {
 	Tag int32
 	V   string
