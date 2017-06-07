@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"strings"
 	"unicode"
 )
 
@@ -16,19 +18,22 @@ const (
 	Tag_WORD    int32  = 256 + iota
 	Tag_REPO
 	Tag_IMAGE
+	Tag_VERSION
 )
 
 var (
 	Token_EOF = token{Tag_EOF, "EOF"}
 	words     = map[string]*token{
-		"repo":  &token{Tag_REPO, "repo"},
-		"image": &token{Tag_IMAGE, "image"},
+		"repo":    &token{Tag_REPO, "repo"},
+		"image":   &token{Tag_IMAGE, "image"},
+		"version": &token{Tag_VERSION, "version"},
 	}
 )
 
 type config struct {
-	Repo  string
-	Image string
+	Repo    string
+	Image   string
+	Version string
 }
 
 func (c *config) check() {
@@ -36,6 +41,47 @@ func (c *config) check() {
 		fmt.Fprintln(os.Stderr, "[e] Not initialized.")
 		os.Exit(-1)
 	}
+}
+
+func (c *config) dump() []byte {
+	buf := new(bytes.Buffer)
+	v := reflect.ValueOf(*c)
+	for i := 0; i < v.NumField(); i++ {
+		_f := strings.ToLower(v.Type().Field(i).Name)
+		_v := v.Field(i)
+		if _v.Kind() == reflect.String {
+			_s := _v.String()
+			if len(_s) > 0 {
+				_, err := buf.WriteString(_f)
+				if err != nil {
+					panic(err)
+				}
+				_, err = buf.WriteString("=")
+				if err != nil {
+					panic(err)
+				}
+
+				_, err = buf.WriteString(_v.String())
+				if err != nil {
+					panic(err)
+				}
+				buf.WriteByte('\n')
+			}
+		}
+	}
+	return buf.Bytes()
+}
+
+func (c *config) writeToDisk() error {
+	b := c.dump()
+
+	f, err := os.OpenFile(CONFIG_FILE, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Write(b)
+	return nil
 }
 
 type token struct {
@@ -89,7 +135,7 @@ func scan(r io.ByteScanner) *token {
 		}
 	}
 
-	if unicode.IsLetter(rune(b)) {
+	if unicode.IsLetter(rune(b)) || unicode.IsDigit(rune(b)) {
 		buf := new(bytes.Buffer)
 		err = buf.WriteByte(b)
 		if err != nil {
@@ -101,7 +147,7 @@ func scan(r io.ByteScanner) *token {
 			if err != nil {
 				panic(err)
 			}
-			if unicode.IsDigit(rune(b)) || unicode.IsLetter(rune(b)) || b == '.' {
+			if unicode.IsDigit(rune(b)) || unicode.IsLetter(rune(b)) || b == '.' || b == '-' {
 				buf.WriteByte(b)
 			} else {
 				r.UnreadByte()
@@ -150,6 +196,14 @@ func parseConfig(dst *config, bs []byte) error {
 			t = scan(r)
 			match(t, Tag_WORD)
 			dst.Image = t.V
+		}
+
+		if t.Tag == Tag_VERSION {
+			t = scan(r)
+			match(t, Tag_EQUAL)
+			t = scan(r)
+			match(t, Tag_WORD)
+			dst.Version = t.V
 		}
 
 		if t.Tag == Tag_EOF {

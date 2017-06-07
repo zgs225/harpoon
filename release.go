@@ -20,20 +20,24 @@ func hRelease(args []string) {
 	name := fmt.Sprintf("%s/%s:%s", c.Repo, c.Image, args[0])
 	fmt.Printf("[i] Releasing to %s, Version %s\n", c.Repo, args[0])
 	err := tag(c.Image, name)
+	fmt.Println("[i] Tagging...")
 	if err != nil {
 		fmt.Println("[i] Tag error.")
-		return
+		os.Exit(1)
 	}
+	fmt.Println("[i] Pushing...")
 	err = push(name)
 	if err != nil {
 		fmt.Println("[i] Push error.")
-		return
+		os.Exit(1)
 	}
 
-	err = writeVersion(args[0])
+	fmt.Println("[i] Writing version...")
+	c.Version = args[0]
+	err = c.writeToDisk()
 	if err != nil {
-		fmt.Println("[i] Write version error.")
-		return
+		fmt.Println("[i] Config write to dist error")
+		os.Exit(1)
 	}
 
 	fmt.Println("[i] Done.")
@@ -56,31 +60,4 @@ func newCommand(name string, arg ...string) *exec.Cmd {
 	c.Stderr = os.Stderr
 
 	return c
-}
-
-func writeVersion(v string) error {
-	vf := "VERSION"
-	f, err := os.OpenFile(vf, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = f.WriteString(v + "\n")
-	if err != nil {
-		return err
-	}
-
-	c := newCommand("git", "add", vf)
-	err = c.Run()
-	if err != nil {
-		return err
-	}
-
-	c = newCommand("git", "commit", "--amend", "--no-edit")
-	err = c.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
