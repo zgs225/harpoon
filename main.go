@@ -17,6 +17,7 @@ func usage() {
 	fmt.Fprintln(os.Stderr, "\tinit   \t进行初始化，生成工具脚本")
 	fmt.Fprintln(os.Stderr, "\tbuild  \t编译Docker镜像")
 	fmt.Fprintln(os.Stderr, "\trelease\t将镜像打包版本并推送到仓库中")
+	fmt.Fprintln(os.Stderr, "\tversion\t获取当前镜像版本")
 	fmt.Fprintln(os.Stderr, "")
 }
 
@@ -35,6 +36,8 @@ func main() {
 		hBuild(os.Args[2:])
 	case "release":
 		hRelease(os.Args[2:])
+	case "version":
+		hVersion()
 	default:
 		usage()
 		os.Exit(1)

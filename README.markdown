@@ -13,4 +13,5 @@ Commands:
         init    进行初始化，生成工具脚本
         build   编译Docker镜像
         release 将镜像打包版本并推送到仓库中
+        version 获取当前镜像版本
 ```
