@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 )
 
 // Build docker image
@@ -16,10 +14,7 @@ func hBuild(args []string) {
 	cmdArgs := []string{"build", "-t", c.Image}
 	cmdArgs = append(cmdArgs, args...)
 	cmdArgs = append(cmdArgs, ".")
-
-	cmd := exec.Command("docker", cmdArgs...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd := newCommand("docker", cmdArgs...)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println("[i] Error.")
