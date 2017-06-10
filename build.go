@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,11 +9,23 @@ import (
 
 // Build docker image
 
-func hBuild() {
+func hBuild(args []string) {
+	f := flag.NewFlagSet("harpoon build", flag.PanicOnError)
+	noCache := f.Bool("no-cache", false, "是否使用缓存")
+	erro := f.Parse(args)
+	if erro != nil {
+		panic(erro)
+	}
+
 	c := loadConfig()
 	c.check()
 	fmt.Printf("[i] Building docker image %v\n", c.Image)
-	cmd := exec.Command("docker", "build", "-t", c.Image, ".")
+	cmdArgs := []string{"build", "-t", c.Image}
+	if *noCache {
+		cmdArgs = append(cmdArgs, "--no-cache")
+	}
+	cmdArgs = append(cmdArgs, ".")
+	cmd := exec.Command("docker", cmdArgs...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()

@@ -32,7 +32,7 @@ func main() {
 	case "init":
 		hInit(os.Args[2:])
 	case "build":
-		hBuild()
+		hBuild(os.Args[2:])
 	case "release":
 		hRelease(os.Args[2:])
 	default:
